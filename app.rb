@@ -22,15 +22,15 @@ get "/send" do
     r = Request.new(url: params[:url])
     r.save
   end
-  body params.to_s
 end
 
-get "/stats.?:format?" do
-  if params[:format] == 'json'
-    body '[{"qwerty":1}]'
-  else
+get "/stats" do
     erb :"stats"
-  end
+end
+
+get "/json" do
+    #group by
+    body Request.all.to_json
 end
 
 helpers do

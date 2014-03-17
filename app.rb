@@ -17,11 +17,20 @@ get "/" do
 end
 
 get "/send" do
-  @test = params
+  status 200
+  if params[:url]
+    r = Request.new(url: params[:url])
+    r.save
+  end
+  body params.to_s
 end
 
-get "/stats" do
-  erb :"stats"
+get "/stats.?:format?" do
+  if params[:format] == 'json'
+    body '[{"qwerty":1}]'
+  else
+    erb :"stats"
+  end
 end
 
 helpers do

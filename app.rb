@@ -29,7 +29,21 @@ get "/stats" do
 end
 
 get "/json" do
-    body Request.select('COUNT(*) as count, sent, success').group('sent, success').to_json
+  data = {total: 0, success: 0, fail: 0}
+
+  Request.select('COUNT(*) as count, sent, success').group('sent, success').each do |r|
+    if r[:sent]
+      if r[:success]
+        data[:success] += r[:count]
+      else
+        data[:fail] += r[:count]
+      end
+    end
+
+    data[:total] += r[:count]
+  end
+
+  body data.to_json
 end
 
 helpers do

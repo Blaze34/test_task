@@ -29,8 +29,7 @@ get "/stats" do
 end
 
 get "/json" do
-    #group by
-    body Request.all.to_json
+    body Request.select('COUNT(*) as count, sent, success').group('sent, success').to_json
 end
 
 helpers do

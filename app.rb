@@ -7,6 +7,20 @@ set :database, 'sqlite3:///task.db'
 
 class Request < ActiveRecord::Base
   validates :url, presence: true, url: true
+
+  class << self
+    def stats
+      data = Hash.new(0)
+
+      select('COUNT(*) as count, sent, success').group('sent, success').each do |r|
+        data[ r[:success] ? :success : :fail] += r[:count] if r[:sent]
+
+        data[:total] += r[:count]
+      end
+
+      data
+    end
+  end
 end
 
 get '/' do
@@ -14,11 +28,7 @@ get '/' do
 end
 
 get '/send' do
-  status 200
-  if params[:url]
-    r = Request.new(url: params[:url])
-    r.save
-  end
+  Request.create(url: params[:url]) if params[:url]
 end
 
 get '/stats' do
@@ -26,21 +36,7 @@ get '/stats' do
 end
 
 get '/json' do
-  data = {total: 0, success: 0, fail: 0}
-
-  Request.select('COUNT(*) as count, sent, success').group('sent, success').each do |r|
-    if r[:sent]
-      if r[:success]
-        data[:success] += r[:count]
-      else
-        data[:fail] += r[:count]
-      end
-    end
-
-    data[:total] += r[:count]
-  end
-
-  body data.to_json
+  body Request.stats.to_json
 end
 
 helpers do

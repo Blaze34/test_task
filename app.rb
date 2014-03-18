@@ -1,22 +1,19 @@
 # app.rb
-require "sinatra"
-require "sinatra/activerecord"
+require 'sinatra'
+require 'missing_validators'
+require 'sinatra/activerecord'
 
-set :database, "sqlite3:///task.db"
+set :database, 'sqlite3:///task.db'
 
 class Request < ActiveRecord::Base
-  validates :url, presence: true
-
-  #def valid_url?
-  #  false
-  #end
+  validates :url, presence: true, url: true
 end
 
-get "/" do
-  erb :"index"
+get '/' do
+  erb :'index'
 end
 
-get "/send" do
+get '/send' do
   status 200
   if params[:url]
     r = Request.new(url: params[:url])
@@ -24,11 +21,11 @@ get "/send" do
   end
 end
 
-get "/stats" do
-    erb :"stats"
+get '/stats' do
+    erb :'stats'
 end
 
-get "/json" do
+get '/json' do
   data = {total: 0, success: 0, fail: 0}
 
   Request.select('COUNT(*) as count, sent, success').group('sent, success').each do |r|
@@ -50,9 +47,9 @@ helpers do
   # If @title is assigned, add it to the page's title.
   def title
     if @title
-      "#{@title} -- Requests"
+      '#{@title} -- Requests'
     else
-      "My Ruby Project"
+      'My Ruby Project'
     end
   end
 

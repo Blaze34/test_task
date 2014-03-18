@@ -14,8 +14,7 @@ ActiveRecord::Schema.define(version: 20140317144431) do
 
   create_table "requests", force: true do |t|
     t.string  "url"
-    t.boolean "sent"
-    t.boolean "success"
+    t.integer "response"
   end
 
 end

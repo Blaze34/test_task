@@ -12,8 +12,8 @@ class Request < ActiveRecord::Base
     def stats
       data = Hash.new(0)
 
-      select('COUNT(*) as count, sent, success').group('sent, success').each do |r|
-        data[ r[:success] ? :success : :fail] += r[:count] if r[:sent]
+      select('COUNT(*) as count, response').group('response').each do |r|
+        data[ r[:response] == 200 ? :success : :fail] += r[:count] if r[:response]
 
         data[:total] += r[:count]
       end

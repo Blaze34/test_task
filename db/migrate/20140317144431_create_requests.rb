@@ -2,8 +2,7 @@ class CreateRequests < ActiveRecord::Migration
     def up
       create_table :requests do |t|
         t.string :url
-        t.boolean :sent
-        t.boolean :success
+        t.integer :response
       end
     end
 

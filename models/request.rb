@@ -13,5 +13,16 @@ class Request < ActiveRecord::Base
 
       data
     end
+
+    def start_process
+
+      where('response != 200 OR response IS NULL').each do |r|
+        uri = URI(r.url)
+
+        response = nil
+        Net::HTTP.start(uri.host, uri.port) { |http| response = http.head('/') }
+        r.update_attribute(:response, response.code) if response.is_a? Hash
+      end
+    end
   end
 end

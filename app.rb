@@ -1,4 +1,5 @@
 # app.rb
+require 'net/http'
 require 'sinatra'
 require 'missing_validators'
 require 'sinatra/activerecord'

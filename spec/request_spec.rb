@@ -2,48 +2,38 @@ require 'support/active_record'
 require_relative '../models/request'
 
 describe Request do
-  let(:request) { Request.new }
-
-  before (:each) do
-
-  end
-
-  before (:all) do
-
-  end
 
   context 'validation' do
-    it { request.should have(2).error_on(:url) }
+    subject { Request.new }
+
+    context 'when not valid' do
+      it { should have(2).error_on(:url) }
+      it do
+        subject.url = 'foo'
+        should have(1).error_on(:url)
+      end
+    end
+
+    context 'when valid' do
+      it do
+        subject.url = 'http://google.com'
+        should have(:no).error_on(:url)
+      end
+    end
+
+  end
+
+  describe '::stats' do
+    subject {Request.stats}
+    it { should be_a(Hash) }
+    it { should be_empty }
+
     it do
-      request.url = 'foo'
-      @request.should have(1).error_on(:url)
+      Request.create(url: 'http://google.com')
+
+      subject.each_value do |v|
+        expect(v).to satisfy { |c| c > 0}
+      end
     end
   end
-
-  it 'requires a valid url' do
-    @request.should have(2).error_on(:url)
-    @request.url = 'foo'
-    @request.should have(1).error_on(:url)
-    @request.url = 'http://google.com'
-    @request.should have(:no).errors_on(:url)
-  end
-
-  it 'save request' do
-    @request.url = 'http://google.com'
-    @request.save.should == true
-  end
-
-  it 'checking stats' do
-
-    @request.url = 'http://google.com'
-    @request.save
-
-    stats = Request.stats
-    stats.should be_a(Hash)
-
-    stats.each_value do |v|
-      v.should > 0
-    end
-  end
-
 end

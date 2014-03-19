@@ -1,6 +1,8 @@
 class Request < ActiveRecord::Base
   validates :url, presence: true, url: true
 
+  after_create :start_process
+
   class << self
     def stats
       data = Hash.new(0)
@@ -13,15 +15,17 @@ class Request < ActiveRecord::Base
 
       data
     end
+  end
 
-    def start_process
+  private
 
-      where('response != 200 OR response IS NULL').each do |r|
-        uri = URI(r.url)
+  def start_process
+    Request.where('response != 200 OR response IS NULL').each do |r|
+      uri = URI r.url
 
-        response = nil
-        Net::HTTP.start(uri.host, uri.port) { |http| response = http.head('/') }
-        r.update_attribute(:response, response.code) if response.is_a? Hash
+      Net::HTTP.start uri.host, uri.port do |http|
+        response = http.head '/'
+        r.update_attribute :response, response.code
       end
     end
   end

@@ -4,6 +4,7 @@ require 'sinatra'
 require 'missing_validators'
 require 'sinatra/activerecord'
 require_relative 'models/request'
+require 'sidekiq'
 
 set :database, 'sqlite3:///task.db'
 
@@ -12,7 +13,7 @@ get '/' do
 end
 
 get '/send' do
-  Request.create(url: params[:url]) if params[:url]
+  Request.create(url: params[:url])
 end
 
 get '/stats' do

@@ -36,4 +36,13 @@ describe Request do
       end
     end
   end
+
+  describe '.start_process' do
+    it do
+      r = Request.create(url: 'http://google.com')
+      check = Request.find(r.id)
+
+      expect(check.response).not_to be_nil
+    end
+  end
 end

@@ -32,7 +32,7 @@ describe Request do
       Request.create(url: 'http://google.com')
 
       subject.each_value do |v|
-        expect(v).to satisfy { |c| c > 0}
+        expect(v).to be > 0
       end
     end
   end
